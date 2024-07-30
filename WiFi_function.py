@@ -94,8 +94,10 @@ def scan_wifi_position(index):
         index = len(inputdata)
     RSSI_24G = [inputdata[index,2],inputdata[index,3],inputdata[index,4],inputdata[index,5]]
     RSSI_5G = [inputdata[index,6],inputdata[index,7],inputdata[index,8],inputdata[index,9]]
-    
-    #用掃描的RSSI
+
+    # 把RSSI 傳上去
+
+    # 用掃描的RSSI
     # RSSI_24G = [-1,-1,-1,-1]
     # RSSI_5G = [-1,-1,-1,-1]
     # target_ssids = ["AP1_2.4G", "AP1_5G", "AP2_2.4G", "AP2_5G", "AP3_2.4G", "AP3_5G", "AP4_2.4G", "AP4_5G"]
