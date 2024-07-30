@@ -1,0 +1,10 @@
+<RCC>
+  <qresource prefix="image">
+    <file>img/camera.png</file>
+    <file>img/checked.png</file>
+    <file>img/home.png</file>
+  </qresource>
+  <qresource prefix="map">
+    <file>img/4F平面圖_4aps.png</file>
+  </qresource>
+</RCC>
