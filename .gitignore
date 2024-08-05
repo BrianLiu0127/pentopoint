@@ -1,1 +1,14 @@
 api_key
+.idea/misc.xml
+.idea/modules.xml
+.idea/pentopoint.iml
+.idea/vcs.xml
+.idea/inspectionProfiles/profiles_settings.xml
+__pycache__/astsp.cpython-312.pyc
+__pycache__/edgesdk.cpython-312.pyc
+__pycache__/GoogleAPI_function.cpython-312.pyc
+__pycache__/resource_rc.cpython-312.pyc
+__pycache__/scan_wifi_wpa.cpython-312.pyc
+__pycache__/Temp.cpython-312.pyc
+__pycache__/WiFi_function.cpython-312.pyc
+recover.sqlite
