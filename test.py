@@ -509,7 +509,7 @@ class MapList(QWidget):
         self.hlay.addLayout(self.leftLayout)
         self.rightLayout.addWidget(self.scrollarea, 2)
         # self.rightLayout.addLayout(self.NPvlay,1)
-        self.rightLayout.addWidget(self.nearproductwidget, 1)
+        # self.rightLayout.addWidget(self.nearproductwidget, 1)
         # rightLayout.addLayout(textButtonLayout)
         # self.hlay.addWidget(self.scrollarea)
         self.hlay.addLayout(self.rightLayout)
