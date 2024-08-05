@@ -258,7 +258,8 @@ class CameraScreen(QMainWindow):
         # making it central widget of main window
         self.verticalLayout.addWidget(self.viewfinder)
 		# Set the default camera. 
-        self.select_camera(1) 
+        # self.select_camera(1)
+        self.select_camera(0)
 
     # creating a tool bar
     # toolbar = QToolBar("Camera Tool Bar")
