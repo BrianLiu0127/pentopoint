@@ -250,7 +250,7 @@ class CameraScreen(QMainWindow):
 		# making it central widget of main window 
         self.verticalLayout.addWidget(self.viewfinder)
 		# Set the default camera. 
-        self.select_camera(0) 
+        self.select_camera(1) 
 
 		# creating a tool bar 
         # toolbar = QToolBar("Camera Tool Bar") 
@@ -308,7 +308,7 @@ class CameraScreen(QMainWindow):
 		# capture the image and save it on the save path 
         
         
-        # self.capture.capture(os.path.join(self.save_path, 'List.jpg'))
+        self.capture.capture(os.path.join(self.save_path, 'List.jpg'))
         
         
         # print(self.save_path)
@@ -1039,7 +1039,7 @@ class MapList(QWidget):
         maplist.ShoppingCartButton.append(maplist.RecommendedButton.pop(idx))
         maplist.recommend_formLayout.takeAt(idx)
         while self.recommend_formLayout.count():
-            item = self.formLayout.takeAt(0)
+            item = self.recommend_formLayout.takeAt(0)
             widget = item.widget()
             if widget:
                 widget.setParent(None)
