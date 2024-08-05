@@ -593,7 +593,8 @@ class MapList(QWidget):
             # self.pos = (15,15)
             # self.label.setText(",100")
             # print("wifi:15,15")
-            POS = WiFi.scan_wifi_position(index)
+
+            POS = WiFi.scan_wifi_position(index,edge_device)
             # POS = [[10,10],[10,10]]
             # print("POS:", POS)
             self.pos = POS[0]
@@ -635,9 +636,6 @@ class MapList(QWidget):
         #     self.RealPos.move(x2,y2-10)
         #     self.RealPos.show()
         print("Set Pos Label!!")
-        self.pos = (3,3)
-        self.realpos = (3,3)
-        print(((round(self.pos[0] * 32), (1000-round(self.pos[1] * 32)))))
         x = round(self.pos[0] * Scale_map)
         y = 400 - round(self.pos[1] * Scale_map)
         self.PosButton.move(x - 5, y - 5)
@@ -650,7 +648,7 @@ class MapList(QWidget):
         # else:
         #     x2 = int(433 / 2)
         #     y2 = 200
-        edge_device.send_pos((round(self.pos[0] * 32), (1000-round(self.pos[1] * 32))))
+        edge_device.send_pos(((round(self.pos[0] * 31.25), (1000-round(self.pos[1] * 31.25)))))
         self.RealPos.move(x2 - 5, y2 - 5)
         self.RealPos.show()
 

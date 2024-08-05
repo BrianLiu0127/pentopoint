@@ -1,4 +1,5 @@
 import datetime
+import random
 import time
 
 # 導入 WISE-PaaS 相關庫
@@ -19,11 +20,12 @@ class EdgeDevice():
 
     def start(self):
         # 啟動應用程序
-        id = "b304d384-7f02-4c65-bc25-0dd23243f31c"
+        id = "7c015b4d-6ad5-4294-a941-71facde241de"
         url = "https://api-dccs-ensaas.wise-paas.iotcenter.nycu.edu.tw/"
-        key = "7179740cb057c11d5f0524679f9f59uw"
+        key = "8a37426cf6627ad2463b4dfab7533f43"
         self.connect(id, url, key)
         self.upload_config()
+
 
     def connect(self, id, url, key):
         try:
@@ -75,32 +77,7 @@ class EdgeDevice():
         y_tag = EdgeTag("Wi-Fi", "y", pos[1])
         data.tagList.append(x_tag)
         data.tagList.append(y_tag)
-        x, y = pos
-        area = [0, 0, 0, 0, 0, 0, 0, 0]
-        if x < 250:
-            if y < 350:
-                area[0] = 1
-            elif y < 700:
-                area[1] = 1
-            elif y > 700 & y < 1000:
-                area[2] = 1
-        elif x < 780:
-            if y < 350:
-                area[3] = 1
-            elif y < 700:
-                area[4] = 1
-            elif y > 700 & y < 1000:
-                area[5] = 1
-        elif x < 1000:
-            if y < 600:
-                area[6] = 1
-            elif y < 1000:
-                area[7] = 1
-        for i,a in enumerate(area):
-            area_tag = EdgeTag("Wi-Fi", f"area{i}", a)
-            data.tagList.append(area_tag)
         data.timestamp = datetime.datetime.now()
-
         self._edgeAgent.sendData(data)
 
     def send_rssi(self, rssi):
@@ -160,25 +137,13 @@ class EdgeDevice():
                 fractionDisplayFormat=2
             )
             wifiDeviceConfig.analogTagList.append(analog)
-        for i in range(8):
-            analog = AnalogTagConfig(
-                name='area' + str(i),
-                description='area' + str(i),
-                readOnly=False,
-                arraySize=0,
-                spanHigh=1,
-                spanLow=0,
-                engineerUnit='',
-                integerDisplayFormat=1,
-                fractionDisplayFormat=0
-            )
-            wifiDeviceConfig.analogTagList.append(analog)
         config.node.deviceList.append(wifiDeviceConfig)
         return config
-
-
 if __name__ == "__main__":
     app = EdgeDevice()
     app.start()
     while 1:
-        app.send_pos((3, 3))
+        time.sleep(1)
+        app.send_rssi([random.randint(0, 70) for _ in range(4)])
+        app.send_pos((10,10))
+
