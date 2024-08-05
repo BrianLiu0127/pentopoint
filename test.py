@@ -29,16 +29,17 @@ class Item(QPushButton):
     def __init__(self):
         super(Item, self).__init__()
         self.checkBtn = QPushButton(self)
-        self.checkBtn.setStyleSheet("border-radius: 0px;background-color:rgba(245, 200, 77,1);")
-        self.checkBtn.setGeometry(10, 10, 12, 12)
-        self.checkBtn.setIcon(QIcon("img/checked"))
-        self.checkBtn.setIconSize(QtCore.QSize(12, 12))
+        self.checkBtn.setStyleSheet("border-radius: 10px;background-color:rgb(255,255,255);border:1px solid #000")
+        self.checkBtn.setGeometry(20,12,20,20)
+        # self.checkBtn.setIcon(QIcon("img/checked"))
+        # self.checkBtn.setIconSize(QtCore.QSize(20,20))
         self.right = 1
         self.pos = (0, 0)
         self.isnotclass = 0
         self.shelf = ""
-        self.clicked.connect(lambda: MapList.clickItem(self))
-        self.signal_show.connect(lambda: MapList.showitem(self))
+        self.clicked.connect(lambda:MapList.clickItem(self))
+        self.checkBtn.clicked.connect(lambda:MapList.delItem(maplist,self.text()))
+        self.signal_show.connect(lambda:MapList.showitem(self))
 
 
 def get_sorted_list(self, cur_pos: tuple[int, int], name_list: tuple[str]) -> list[str]:
@@ -97,8 +98,22 @@ def generate_List(file_name):
     # return [("banana",1,12),("apple",2,24),("banana1",1,12),("apple1",2,24),("banana2",1,12),("apple2",2,24),("banana3",1,12),("apple3",2,24),("banana4",1,12),("apple4",2,24),("banana5",1,12),("apple5",2,24),("banana6",1,12),("apple6",2,24),("banana7",1,12),("apple7",2,24),("banana",1,12),("apple",2,24),("banana1",1,12),("apple1",2,24),("banana2",1,12),("apple2",2,24),("banana3",1,12),("apple3",2,24),("banana4",1,12),("apple4",2,24),("banana5",1,12),("apple5",2,24),("banana6",1,12),("apple6",2,24),("banana7",1,12),("apple7",2,24)]
     # return [("banana",1,12),("apple",2,24)]
 
+def get_recommendation(name:str):
+    if name == "guest":
+        targets = ["醬","巧克力"]
+    else:
+        targets = ["巧克力","巧克力","巧克力","巧克力"]
+    list = []
+    for product in targets:
+        [shelf, keyword] = Temp.find_shelf_with_keywords(product_name=product)
+        [x, y, label] = Temp.find_shelf_position(shelf, keyword)
+        list.append((product,x,y,label,shelf))
+        print(shelf)
+        print(keyword)
+        print(x,y,label)
+    return list
 
-def check_login(account: str, password: str) -> int:
+def check_login(account:str,password:str) -> int:
     # 0 => wrong account or password, 1 => success, 2 => The account doesn't exist
     data = pd.read_csv('Account.csv', dtype=str)
     # print(data['Account'][0:len(data['Account'])])
@@ -242,8 +257,8 @@ class CameraScreen(QMainWindow):
 
         # making it central widget of main window
         self.verticalLayout.addWidget(self.viewfinder)
-        # Set the default camera.
-        self.select_camera(0)
+		# Set the default camera. 
+        self.select_camera(1) 
 
     # creating a tool bar
     # toolbar = QToolBar("Camera Tool Bar")
@@ -297,10 +312,12 @@ class CameraScreen(QMainWindow):
     def click_photo(self):
         # time stamp
         # timestamp = time.strftime("%d-%b-%Y-%H_%M_%S")
-        # capture the image and save it on the save path
-
-        # self.capture.capture(os.path.join(self.save_path, 'List.jpg'))
-
+		# capture the image and save it on the save path 
+        
+        
+        self.capture.capture(os.path.join(self.save_path, 'List.jpg'))
+        
+        
         # print(self.save_path)
         # image = self.viewfinder.grab()
         # image.save('List.jpg')
@@ -390,33 +407,51 @@ class MapList(QWidget):
         self.ShoppingCartBuyed = []
         self.ShoppingCartLabel = []
         self.ShoppingCartPoint = []
+        self.RecommendedButton = []
         self.path_label = []
         self.path_point = []
+        self.choose_Recommend = None #選到的button
 
-        self.nearproductwidget = QWidget()
-        self.NPvlay = QVBoxLayout()
-        self.NPvlay.setContentsMargins(10, 10, 10, 10)
-        self.NPvlay.setSpacing(0)
-        self.NPbutton = QPushButton("買到了！")
-        self.NPbutton.setFixedHeight(30)
-        self.NPbutton.setStyleSheet("background-color:#939597;font-size:14px;color:#000000;border-radius:6px")
-        self.NPlabel = QLabel(text="您附近有：")
-        self.NPlabel.setStyleSheet("font-size:14px;")  #background-color:#939597;border-radius:6px")
+        self.recommend_area = QWidget()
+        self.recommend_scrollarea = QScrollArea()
+        self.recommend_formLayout = QFormLayout()
+        self.recommend_groupBox = QGroupBox()
+        self.recommend_Btn_area = QWidget()
+        self.recommend_Btn_add = QPushButton("加入")
+        self.recommend_Btn_add.setStyleSheet("QPushButton{background-color: rgb(147, 149, 151);selection-background-color: rgb(255, 255, 127);font-size:14px;color:#000000;border-radius:6px}QPushButton::pressed {background-color: rgb(255,255,255);font-size:14px;color:#000000;border-radius:6px}")
+        self.recommend_Btn_add.clicked.connect(lambda:self.addRecommend(self.choose_Recommend))
+        # self.recommend_Btn_del = QPushButton("移除")
+        # self.recommend_Btn_del.setStyleSheet("background-color:#939597;font-size:14px;color:#000000;border-radius:6px")
+        hlay = QHBoxLayout()
+        # hlay.addWidget(self.recommend_Btn_del)
+        hlay.addWidget(self.recommend_Btn_add)
+        self.recommend_Btn_area.setLayout(hlay)
+
+        self.recommend_vlay = QVBoxLayout()
+        self.recommend_vlay.setContentsMargins(0,0,0,0)
+        self.recommend_vlay.setSpacing(0)
+        self.recommend_scrollarea.setContentsMargins(0,0,0,0)
+        # self.NPbutton = QPushButton("買到了！")
+        # self.NPbutton.setFixedHeight(30)
+        # self.NPbutton.setStyleSheet("background-color:#939597;font-size:14px;color:#000000;border-radius:6px")
+        self.recommend_label = QLabel(text="為您推薦")
+        self.recommend_label.setStyleSheet("font-size:14px;")#background-color:#939597;border-radius:6px")
         # self.NPlabel.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
         self.nearproduct = "茶"
-        self.nearproductlabel = QLabel(text=self.nearproduct)
-        self.nearproductlabel.setStyleSheet("font-size:30px;")  #background-color:#939597;border-radius:6px")
-        self.nearproductlabel.setAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
-        self.NPlabel.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        self.NPvlay.addWidget(self.NPlabel, 1)
-        self.NPvlay.addWidget(self.nearproductlabel, 4)
-        self.NPvlay.addWidget(self.NPbutton, 1)
-        # self.NPvlay.setAlignment(Qt.AlignCenter)
-        self.nearproductwidget.setLayout(self.NPvlay)
-        self.nearproductwidget.setStyleSheet("border-radius: 0px;background-color:rgba(245, 200, 77,1);")
+        # self.nearproductlabel = QLabel(text=self.nearproduct)
+        # self.nearproductlabel.setStyleSheet("font-size:30px;")#background-color:#939597;border-radius:6px")
+        # self.nearproductlabel.setAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
+        self.recommend_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self.recommend_vlay.addWidget(self.recommend_label,1)
+        self.recommend_vlay.addWidget(self.recommend_scrollarea,4)
+        self.recommend_vlay.addWidget(self.recommend_Btn_area,1)
+        # self.recommend_vlay.setAlignment(Qt.AlignCenter)
+        self.recommend_area.setLayout(self.recommend_vlay)
+        self.recommend_area.setStyleSheet("border-radius: 0px;background-color:rgba(245, 223, 77,1);")
         self.show_item = None
         #按下買到了就刪除此物件。
-        self.NPbutton.clicked.connect(lambda: self.delItem(self.nearproduct))
+        # self.NPbutton.clicked.connect(lambda:self.delItem(self.nearproduct))
+
 
         self.pop_up_screen = QDialog(self)
         self.pop_up_screen.setWindowTitle('Something Wrong')
@@ -444,8 +479,9 @@ class MapList(QWidget):
         self.hlay = QHBoxLayout(self)
         self.hlay.setContentsMargins(0, 0, 0, 0)
         self.hlay.setSpacing(0)
-        self.scrollarea.setContentsMargins(0, 0, 0, 0)
-
+        self.scrollarea.setContentsMargins(0,0,0,0)
+        # self.formLayout.setSpacing(5)
+        
         self.mapimg = QLabel()
         self.mapimg.setScaledContents(True)
         self.pixmap = QPixmap('./img/4F平面圖_4aps.png')
@@ -657,10 +693,18 @@ class MapList(QWidget):
             if item.text() == name:
                 if item.text() == self.nearproduct:
                     self.show_item = None
-                    maplist.NPlabel.setText("您附近有：")
+                    # maplist.NPlabel.setText("您附近有：")
                 self.delList(item)
                 self.pop_up_screen.hide()
                 self.wrong_name = ""
+                return
+        # for item in self.RecommendedButton:
+        #     if item.text() == name:
+        #         idx = self.RecommendedButton.index(item)
+        #         self.recommend_formLayout.takeAt(idx)
+        #         del item
+        #         self.choose_Recommend = None
+        #         return
 
     def delList(self, item):
         idx = self.ShoppingCartButton.index(item)
@@ -699,9 +743,17 @@ class MapList(QWidget):
 
     def setList(self):
         ShopingList = generate_List("List.png")
+        RecommendedList = get_recommendation(login.name)
+
+        if login.isLogin():
+            self.recommend_label.setText(" "+login.name+"您好 為您推薦")
+        else:
+            self.recommend_label.setText(" 貴賓 您好 為您推薦")
+
         self.ShoppingCartButton = []
         self.ShoppingCartLabel = []
         self.ShoppingCartPoint = []
+        self.RecommendedButton = []
 
         # self.verticalSpacer = QSpacerItem(0,0,QSizePolicy.Minimum, QSizePolicy.Expanding)
         for items in ShopingList:
@@ -738,8 +790,31 @@ class MapList(QWidget):
         print(ShopingList)
 
         self.formLayout.setAlignment(Qt.AlignCenter)
+        self.formLayout.setSizeConstraint(QLayout.SetMinAndMaxSize)
         self.groupBox.setLayout(self.formLayout)
         self.scrollarea.setWidget(self.groupBox)
+
+        for items in RecommendedList:
+            button = Item()
+            button.setText(items[0])
+            button.pos = (items[1],items[2])
+            button.isnotclass = items[3]
+            button.shelf = items[4]
+            print("button pos:", button.pos)
+            button.setStyleSheet("border-radius: 15px;background-color:#939597;font-size:14px;color:#000000;")
+            button.setFixedHeight(40)
+            button.setFixedWidth(210)
+            if (button.isnotclass == -1):
+                button.setStyleSheet("border-radius: 15px;background-color:rgba(230, 119, 98,1);font-size:14px;color:#000000;")
+                button.setText("\""+items[0]+"\" 可能有誤")
+            button.checkBtn.hide()
+
+            self.RecommendedButton.append(button)
+            self.recommend_formLayout.addRow(button)
+        
+        self.recommend_formLayout.setAlignment(Qt.AlignCenter)
+        self.recommend_groupBox.setLayout(self.recommend_formLayout)
+        self.recommend_scrollarea.setWidget(self.recommend_groupBox)
 
     def update_list(self):
         print("update list!!!")
@@ -782,7 +857,10 @@ class MapList(QWidget):
         for btn in self.ShoppingCartBuyed:
             # print("Buyed",self.ShoppingCartBuyed)
             btn.setStyleSheet("background-color:#DDDDDD;font-size:14px;color:#000000;text-decoration:line-through;")
+            btn.checkBtn.setIcon(QIcon("img/checked"))
+            btn.checkBtn.setIconSize(QtCore.QSize(20,20))
             self.formLayout.addRow(btn)
+            self.scrollarea.verticalScrollBar().setValue(0)
         # self.lock.release()
 
         # set_near_product
@@ -799,8 +877,8 @@ class MapList(QWidget):
 
     def clear_nearproduct(self):
         self.nearproduct = ""
-        self.nearproductlabel.setText(self.nearproduct)
-        self.nearproductlabel.show()
+        # self.nearproductlabel.setText(self.nearproduct)
+        # self.nearproductlabel.show()
 
     def set_nearproduct(self):
         if self.show_item:
@@ -812,8 +890,8 @@ class MapList(QWidget):
         # else:
         #     idx = self.show_idx
         self.nearproduct = self.ShoppingCartButton[idx].text()
-        self.nearproductlabel.setText(self.nearproduct)
-        self.nearproductlabel.show()
+        # self.nearproductlabel.setText(self.nearproduct)
+        # self.nearproductlabel.show()
         self.ShoppingCartButton[idx].signal_show.emit()
 
     def set_path(self):
@@ -916,22 +994,31 @@ class MapList(QWidget):
             maplist.ShoppingCartLabel[idx].hide()
             maplist.ShoppingCartPoint[idx].hide()
             self.setStyleSheet("background-color:#939597;font-size:14px;color:#000000;")
-
-    def clickItem(self: Item):
-        if (self not in maplist.ShoppingCartButton):
+    def clickItem(self:Item):
+        if((self not in maplist.ShoppingCartButton) and (self not in maplist.RecommendedButton)):
             return
 
-        if maplist.show_item == self:  ##關掉
+        #選取推薦
+        if(self in maplist.RecommendedButton):
+            if maplist.choose_Recommend == None:
+                maplist.choose_Recommend = self
+            else:
+                maplist.choose_Recommend.setStyleSheet("border-radius: 15px;background-color:#939597;font-size:14px;color:#000000;")
+                maplist.choose_Recommend = self
+            maplist.choose_Recommend.setStyleSheet("border-radius: 15px;background-color:rgba(245, 200, 77,1);font-size:14px;color:#000000;")
+            return
+
+        if maplist.show_item == self: ##關掉
             # self.setStyleSheet("background-color:#939597;font-size:14px;color:#000000;")
             # maplist.ShoppingCartButton[0].setStyleSheet("background-color:rgba(245, 200, 77,1);font-size:14px;color:#000000;")
             maplist.show_item = None
             idx = maplist.ShoppingCartButton.index(self)
             if (not maplist.ShoppingCartLabel[idx].isHidden()):
                 self.signal_show.emit()
-            maplist.NPlabel.setText("您附近有：")
-        else:  ## 換成現在的
+            # maplist.NPlabel.setText("您附近有：")
+        else: ## 換成現在的
             # self.setStyleSheet("background-color:rgba(245, 200, 77,1);font-size:14px;color:#000000;")
-            maplist.NPlabel.setText("您想找的商品：")
+            # maplist.NPlabel.setText("您想找的商品：")
             if maplist.show_item:
                 idx = maplist.ShoppingCartButton.index(maplist.show_item)
                 # maplist.show_item.setStyleSheet("background-color:#939597;font-size:14px;color:#000000;")
@@ -941,7 +1028,7 @@ class MapList(QWidget):
             maplist.show_item = self
             if maplist.ShoppingCartButton.index(self) == 0:
                 print("idx == 0")
-                maplist.NPlabel.setText("您附近有：")
+                # maplist.NPlabel.setText("您附近有：")
             if (not maplist.ShoppingCartLabel[idx].isHidden()):
                 maplist.ShoppingCartButton[idx].signal_show.emit()
         # for idx in range(0,len(maplist.ShoppingCartButton)):
@@ -952,6 +1039,39 @@ class MapList(QWidget):
         #             maplist.show_idx = idx
         # print(maplist.show_idx)
         maplist.set_nearproduct()
+
+    def addRecommend(self,item):
+        if item == None:
+            return
+        item.setStyleSheet("border-radius: 15px;background-color:#939597;font-size:14px;color:#000000;")
+        item.checkBtn.show()
+        item.setParent(self.groupBox)
+        self.groupBox.setLayout(self.formLayout)
+        self.scrollarea.setWidget(self.groupBox)
+        idx = maplist.RecommendedButton.index(item)
+        maplist.ShoppingCartButton.append(maplist.RecommendedButton.pop(idx))
+        maplist.recommend_formLayout.takeAt(idx)
+        while self.recommend_formLayout.count():
+            item = self.recommend_formLayout.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.setParent(None)
+        for btn in self.RecommendedButton:
+            self.recommend_formLayout.addRow(btn)
+
+        self.name_list = [btn.text() for btn in self.ShoppingCartButton]
+
+        target_point = QLabel(maplist.mapimg)
+        target_point.setStyleSheet("font-size:10px;background-color:rgba(0,255,0,1);border-radius: 5px;")
+        target_point.setFixedSize(10,10)
+        target_point.hide()
+        maplist.ShoppingCartPoint.append(target_point)
+        target = QLabel(maplist.mapimg)
+        target.setStyleSheet("font-size:10px;background-color:rgba(245, 223, 77,1);font-size:12px;border:1px solid #000;border-radius: 15px;")
+        target.setFixedSize(68,40)
+        target.setAlignment(Qt.AlignCenter)
+        target.hide()
+        maplist.ShoppingCartLabel.append(target)
 
     def returnHome(self):
         print("back to home")
