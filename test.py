@@ -411,7 +411,7 @@ class MapList(QWidget):
         self.RecommendedButton = []
         self.path_label = []
         self.path_point = []
-        self.choose_Recommend = None #選到的button
+        self.choose_Recommend = None  # 選到的button
 
         self.recommend_area = QWidget()
         self.recommend_scrollarea = QScrollArea()
@@ -419,8 +419,9 @@ class MapList(QWidget):
         self.recommend_groupBox = QGroupBox()
         self.recommend_Btn_area = QWidget()
         self.recommend_Btn_add = QPushButton("加入")
-        self.recommend_Btn_add.setStyleSheet("QPushButton{background-color: rgb(147, 149, 151);selection-background-color: rgb(255, 255, 127);font-size:14px;color:#000000;border-radius:6px}QPushButton::pressed {background-color: rgb(255,255,255);font-size:14px;color:#000000;border-radius:6px}")
-        self.recommend_Btn_add.clicked.connect(lambda:self.addRecommend(self.choose_Recommend))
+        self.recommend_Btn_add.setStyleSheet(
+            "QPushButton{background-color: rgb(147, 149, 151);selection-background-color: rgb(255, 255, 127);font-size:14px;color:#000000;border-radius:6px}QPushButton::pressed {background-color: rgb(255,255,255);font-size:14px;color:#000000;border-radius:6px}")
+        self.recommend_Btn_add.clicked.connect(lambda: self.addRecommend(self.choose_Recommend))
         # self.recommend_Btn_del = QPushButton("移除")
         # self.recommend_Btn_del.setStyleSheet("background-color:#939597;font-size:14px;color:#000000;border-radius:6px")
         hlay = QHBoxLayout()
@@ -429,30 +430,29 @@ class MapList(QWidget):
         self.recommend_Btn_area.setLayout(hlay)
 
         self.recommend_vlay = QVBoxLayout()
-        self.recommend_vlay.setContentsMargins(0,0,0,0)
+        self.recommend_vlay.setContentsMargins(0, 0, 0, 0)
         self.recommend_vlay.setSpacing(0)
-        self.recommend_scrollarea.setContentsMargins(0,0,0,0)
+        self.recommend_scrollarea.setContentsMargins(0, 0, 0, 0)
         # self.NPbutton = QPushButton("買到了！")
         # self.NPbutton.setFixedHeight(30)
         # self.NPbutton.setStyleSheet("background-color:#939597;font-size:14px;color:#000000;border-radius:6px")
         self.recommend_label = QLabel(text="為您推薦")
-        self.recommend_label.setStyleSheet("font-size:14px;")#background-color:#939597;border-radius:6px")
+        self.recommend_label.setStyleSheet("font-size:14px;")  # background-color:#939597;border-radius:6px")
         # self.NPlabel.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
         self.nearproduct = "茶"
         # self.nearproductlabel = QLabel(text=self.nearproduct)
         # self.nearproductlabel.setStyleSheet("font-size:30px;")#background-color:#939597;border-radius:6px")
         # self.nearproductlabel.setAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
         self.recommend_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        self.recommend_vlay.addWidget(self.recommend_label,1)
-        self.recommend_vlay.addWidget(self.recommend_scrollarea,4)
-        self.recommend_vlay.addWidget(self.recommend_Btn_area,1)
+        self.recommend_vlay.addWidget(self.recommend_label, 1)
+        self.recommend_vlay.addWidget(self.recommend_scrollarea, 4)
+        self.recommend_vlay.addWidget(self.recommend_Btn_area, 1)
         # self.recommend_vlay.setAlignment(Qt.AlignCenter)
         self.recommend_area.setLayout(self.recommend_vlay)
         self.recommend_area.setStyleSheet("border-radius: 0px;background-color:rgba(245, 223, 77,1);")
         self.show_item = None
-        #按下買到了就刪除此物件。
+        # 按下買到了就刪除此物件。
         # self.NPbutton.clicked.connect(lambda:self.delItem(self.nearproduct))
-
 
         self.pop_up_screen = QDialog(self)
         self.pop_up_screen.setWindowTitle('Something Wrong')
@@ -480,9 +480,9 @@ class MapList(QWidget):
         self.hlay = QHBoxLayout(self)
         self.hlay.setContentsMargins(0, 0, 0, 0)
         self.hlay.setSpacing(0)
-        self.scrollarea.setContentsMargins(0,0,0,0)
+        self.scrollarea.setContentsMargins(0, 0, 0, 0)
         # self.formLayout.setSpacing(5)
-        
+
         self.mapimg = QLabel()
         self.mapimg.setScaledContents(True)
         self.pixmap = QPixmap('./img/4F平面圖_4aps.png')
@@ -507,9 +507,9 @@ class MapList(QWidget):
         # self.leftLayout.addWidget(self.map_widget)
 
         self.hlay.addLayout(self.leftLayout)
-        self.rightLayout.addWidget(self.scrollarea, 2)
+        self.rightLayout.addWidget(self.scrollarea, 3)
         # self.rightLayout.addLayout(self.NPvlay,1)
-        # self.rightLayout.addWidget(self.nearproductwidget, 1)
+        self.rightLayout.addWidget(self.recommend_area, 2)
         # rightLayout.addLayout(textButtonLayout)
         # self.hlay.addWidget(self.scrollarea)
         self.hlay.addLayout(self.rightLayout)
